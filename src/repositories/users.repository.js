@@ -1,10 +1,7 @@
 import { db } from "../database/database.connect.js";
 
-export async function checkEmail(email) {
-  const result = db.query(`SELECT * FROM users WHERE email = $1;`, [
-    email,
-  ]);
-  return result;
+export async function searchEmail(email) {
+  return db.query(`SELECT * FROM users WHERE email = $1;`, [email]);
 }
 
 export async function insertNewUser(user, password) {
