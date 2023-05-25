@@ -38,29 +38,31 @@ export async function signIn(req, res) {
 }
 
 export async function getFollowers(req, res) {
-  const {token} = res.locals;
-  try{
+  const { token } = res.locals;
+  try {
     const sessionQuery = await searchSession(token);
     if (!sessionQuery.rowCount) return res.sendStatus(401);
     const userId = sessionQuery.rows[0].userId;
     const followersQuery = await searchFollowers(userId);
     const followers = followersQuery.rows;
     return res.status(200).send(followers);
-  }catch(err){
+  } catch (err) {
     return res.status(500).send(err.message);
   }
 }
 
-export async function getFollowing(req, res) {
-  const {token} = res.locals;
-  try{
+export async function getFollowing(_req, res) {
+  const { token } = res.locals;
+  try {
     const sessionQuery = await searchSession(token);
     if (!sessionQuery.rowCount) return res.sendStatus(401);
     const userId = sessionQuery.rows[0].userId;
     const followingQuery = await searchFollowing(userId);
     const following = followingQuery.rows;
     return res.status(200).send(following);
-  }catch(err){
+  } catch (err) {
     return res.status(500).send(err.message);
   }
 }
+
+

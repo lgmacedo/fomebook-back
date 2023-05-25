@@ -13,6 +13,10 @@ export async function searchUser(id) {
   );
 }
 
+export async function searchPost(id) {
+  return db.query(`SELECT * FROM posts WHERE id = $1;`, [id]);
+}
+
 export async function searchUserPosts(id) {
   return db.query(
     `SELECT
@@ -29,9 +33,37 @@ export async function searchUserPosts(id) {
   );
 }
 
+export async function checkFollow(followed, following) {
+  return db.query(
+    `SELECT * FROM followers WHERE "userId" = $1 AND "followedBy" = $2;`,
+    [followed, following]
+  );
+}
+
+export async function checkLike(postId, userId) {
+  return db.query(`SELECT * FROM likes WHERE "postId" = $1 AND "userId" = $2;`, [
+    postId,
+    userId,
+  ]);
+}
+
 export async function insertNewPost(id, picture, description) {
   db.query(
-    `INSERT INTO posts ("userId", "postPicture", "postDescription") VALUES ($1, $2, $3)`,
+    `INSERT INTO posts ("userId", "postPicture", "postDescription") VALUES ($1, $2, $3);`,
     [id, picture, description]
   );
+}
+
+export async function insertNewLike(postId, userId) {
+  db.query(`INSERT INTO likes ("postId", "userId") VALUES ($1, $2);`, [
+    postId,
+    userId,
+  ]);
+}
+
+export async function insertNewFollow(followingId, userId) {
+  db.query(`INSERT INTO followers ("userId", "followedBy") VALUES ($1, $2);`, [
+    followingId,
+    userId,
+  ]);
 }
