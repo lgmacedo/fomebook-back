@@ -5,6 +5,7 @@ import {
   insertNewUser,
   searchFollowers,
   searchFollowing,
+  searchUsers,
 } from "../repositories/users.repository.js";
 import { insertNewSession } from "../repositories/sessions.repository.js";
 import { searchSession } from "../repositories/posts.repository.js";
@@ -37,7 +38,7 @@ export async function signIn(req, res) {
   }
 }
 
-export async function getFollowers(req, res) {
+export async function getFollowers(_req, res) {
   const { token } = res.locals;
   try {
     const sessionQuery = await searchSession(token);
@@ -65,4 +66,15 @@ export async function getFollowing(_req, res) {
   }
 }
 
-
+export async function getUsers(req, res) {
+  const { token } = res.locals;
+  const { key } = req.body;
+  try {
+    const sessionQuery = await searchSession(token);
+    if (!sessionQuery.rowCount) return res.sendStatus(401);
+    const search = await searchUsers(key);
+    return res.status(200).send(search.rows);
+  } catch (err) {
+    return res.status(500).send(err.message);
+  }
+}

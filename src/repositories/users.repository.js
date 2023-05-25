@@ -13,16 +13,30 @@ export async function insertNewUser(user, password) {
 
 export async function searchFollowers(id) {
   return db.query(
-  `SELECT followers."followedBy" AS id, users."userPicture" AS "userPicture", users.name AS "name", users.bio AS "bio"
+    `SELECT followers."followedBy" AS id, users."userPicture" AS "userPicture", users.name AS "name", users.bio AS "bio"
   FROM followers 
   JOIN users ON followers."followedBy" = users.id
-  WHERE followers."userId" = $1;`, [id]);
+  WHERE followers."userId" = $1;`,
+    [id]
+  );
 }
 
 export async function searchFollowing(id) {
   return db.query(
-  `SELECT followers."userId" AS id, users."userPicture" AS "userPicture", users.name AS "name", users.bio AS "bio"
+    `SELECT followers."userId" AS id, users."userPicture" AS "userPicture", users.name AS "name", users.bio AS "bio"
   FROM followers 
   JOIN users ON followers."userId" = users.id
-  WHERE followers."followedBy" = $1;`, [id]);
+  WHERE followers."followedBy" = $1;`,
+    [id]
+  );
+}
+
+export async function searchUsers(key) {
+  let where = "";
+  const values = [];
+  if (key) {
+    where = "WHERE name ILIKE $1";
+    values.push(`%${key}%`);
+  }
+  return db.query(`SELECT id, name, "userPicture", bio FROM users ${where};`, values);
 }
