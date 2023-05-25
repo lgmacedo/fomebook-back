@@ -28,3 +28,10 @@ export async function searchUserPosts(id) {
     [id]
   );
 }
+
+export async function insertNewPost(id, picture, description) {
+  db.query(
+    `INSERT INTO posts ("userId", "postPicture", "postDescription") VALUES ($1, $2, $3)`,
+    [id, picture, description]
+  );
+}
