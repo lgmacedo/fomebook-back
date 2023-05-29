@@ -40,8 +40,22 @@ export async function checkFollow(followed, following) {
   );
 }
 
+export async function unfollow(followed, following) {
+  return db.query(
+    `DELETE FROM followers WHERE "userId" = $1 AND "followedBy" = $2;`,
+    [followed, following]
+  );
+}
+
 export async function checkLike(postId, userId) {
   return db.query(`SELECT * FROM likes WHERE "postId" = $1 AND "userId" = $2;`, [
+    postId,
+    userId,
+  ]);
+}
+
+export async function dislike(postId, userId) {
+  return db.query(`DELETE FROM likes WHERE "postId" = $1 AND "userId" = $2;`, [
     postId,
     userId,
   ]);

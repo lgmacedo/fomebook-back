@@ -8,6 +8,8 @@ import {
   searchPost,
   checkFollow,
   checkLike,
+  unfollow,
+  dislike
 } from "../repositories/posts.repository.js";
 
 export async function getFeed(_req, res) {
@@ -75,7 +77,12 @@ export async function likePost(req, res) {
     const userId = sessionQuery.rows[0].userId;
     const postQuery = await searchPost(id);
     if (!postQuery.rowCount) return res.status(404).send("Post não encontrado");
-    await insertNewLike(id, userId);
+    const liked = await checkLike(id, userId);
+    if(liked.rowCount){
+      await dislike(id, userId);
+    }else{
+      await insertNewLike(id, userId);
+    }
     return res.sendStatus(200);
   } catch (err) {
     return res.status(500).send(err.message);
@@ -92,7 +99,12 @@ export async function followUser(req, res) {
     const userQuery = await searchUser(id);
     if (!userQuery.rowCount)
       return res.status(404).send("Usuário não encontrado");
-    await insertNewFollow(id, userId);
+    const followed = await checkFollow(id, userId);
+    if(followed.rowCount){
+      await unfollow(id, userId);
+    }else{
+      await insertNewFollow(id, userId);
+    }
     return res.sendStatus(200);
   } catch (err) {
     return res.status(500).send(err.message);
